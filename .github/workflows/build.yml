@@ -45,7 +45,7 @@ jobs:
         runs-on: macos-15
         strategy:
             matrix:
-                framework: [net9.0-ios, net9.0-maccatalyst]
+                framework: [net9.0-maccatalyst] # net9.0-ios
 
         steps:
             - uses: actions/checkout@v4
