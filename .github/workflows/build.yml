@@ -12,7 +12,7 @@ jobs:
             - uses: actions/setup-dotnet@v4
               with:
                 dotnet-version: 9.0
-            - run: dotnet workload install maui
+            - run: dotnet workload install maui-windows
 
             - run: dotnet test
 
@@ -25,7 +25,7 @@ jobs:
             - uses: actions/setup-dotnet@v4
               with:
                 dotnet-version: 9.0
-            - run: dotnet workload install maui
+            - run: dotnet workload install maui-windows
 
             - run: dotnet publish ./MauiWithBackend.Backend/MauiWithBackend.Backend.csproj -o release/ --sc
             - uses: actions/upload-artifact@v4
@@ -46,7 +46,7 @@ jobs:
             - uses: actions/setup-dotnet@v4
               with:
                 dotnet-version: 9.0
-            - run: dotnet workload install maui
+            - run: dotnet workload install maui-windows maui-android
 
             - run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj -o release/ --sc -f ${{ matrix.framework }}
             - uses: actions/upload-artifact@v4
@@ -68,7 +68,7 @@ jobs:
             - uses: actions/setup-dotnet@v4
               with:
                 dotnet-version: 9.0
-            - run: dotnet workload install maui
+            - run: dotnet workload install maui-ios maui-maccatalyst
             - run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
             - run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj -o release/ --sc -f ${{ matrix.framework }}
