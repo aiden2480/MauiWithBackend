@@ -4,7 +4,20 @@ on:
     workflow_dispatch:
 
 jobs:
-    build-backend:
+    test:
+        runs-on: windows-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 9.0
+            - run: dotnet workload install maui
+
+            - run: dotnet test
+
+    publish-backend:
+        needs: test
         runs-on: windows-latest
 
         steps:
@@ -21,7 +34,8 @@ jobs:
                 if-no-files-found: error
                 path: release/
 
-    build-frontend-windows:
+    publish-frontend-windows:
+        needs: test
         runs-on: windows-latest
         strategy:
             matrix:
@@ -41,8 +55,9 @@ jobs:
                 if-no-files-found: error
                 path: release/
 
-    build-frontend-macos:
+    publish-frontend-macos:
         if: false # can't build for any apple devices without key
+        needs: test
         runs-on: macos-15
         strategy:
             matrix:
