@@ -43,7 +43,6 @@ jobs:
                 if-no-files-found: error
                 path: release/
 
-
     build-frontend-macos:
         runs-on: macos-15
         strategy:
