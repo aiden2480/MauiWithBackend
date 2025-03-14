@@ -42,10 +42,11 @@ jobs:
                 path: release/
 
     build-frontend-macos:
+        if: false # can't build for any apple devices without key
         runs-on: macos-15
         strategy:
             matrix:
-                framework: [net9.0-maccatalyst] # net9.0-ios
+                framework: [net9.0-ios, net9.0-maccatalyst]
 
         steps:
             - uses: actions/checkout@v4
