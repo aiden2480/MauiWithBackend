@@ -2,51 +2,46 @@ name: Build
 
 on:
     workflow_dispatch:
-  # push:
-  #   branches: [ "main" ]
-  #   paths-ignore:
-  #     - "**.md"
-  #     - '**/*.gitignore'
-  #     - '**/*.gitattributes'
-  #     - '**/*.yml'
-  # pull_request:
-  #   branches: [ "main" ]
 
 jobs:
     build-backend:
         runs-on: windows-latest
 
         steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
-
-          - name: Install .NET 9
-            uses: actions/setup-dotnet@v4
-            with:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
+              with:
                 dotnet-version: 9.0
+                cache: true
+            - run: dotnet workload install maui
 
-          - name: Install .NET MAUI Workload
-            run: dotnet workload install maui
-
-          - name: Build backend
-            run: dotnet publish ./MauiWithBackend.Backend/MauiWithBackend.Backend.csproj -o release/backend/ --sc
-
-          - name: Upload backend
-            uses: actions/upload-artifact@v4
-            with:
+            - run: dotnet publish ./MauiWithBackend.Backend/MauiWithBackend.Backend.csproj -o release/ --sc
+            - uses: actions/upload-artifact@v4
+              with:
                 name: maui-backend
                 if-no-files-found: error
-                path: release/backend/
+                path: release/
 
-          - name: Build frontend
-            run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj -o release/frontend/ --sc
+    build-frontend-windows:
+        runs-on: windows-latest
+        strategy:
+            matrix:
+                framework: [net9.0-android, net9.0-windows10.0.19041.0]
 
-          - name: Upload frontend
-            uses: actions/upload-artifact@v4
-            with:
-                name: maui-frontend
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 9.0
+                cache: true
+            - run: dotnet workload install maui
+
+            - run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj -o release/ --sc -f ${{ matrix.framework }}
+            - uses: actions/upload-artifact@v4
+              with:
+                name: maui-frontend-${{ matrix.framework }}
                 if-no-files-found: error
-                path: release/frontend/
+                path: release/
 
     # build-frontend:
     #     name: Build ${{ matrix.os }}
