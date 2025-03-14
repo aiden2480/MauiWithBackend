@@ -43,30 +43,25 @@ jobs:
                 if-no-files-found: error
                 path: release/
 
-    # build-frontend:
-    #     name: Build ${{ matrix.os }}
-    #     permissions:
-    #         contents: write
-    #     strategy:
-    #         matrix:
-    #             os: [ windows-latest, macos-15 ]
-    #     runs-on: ${{ matrix.os }}
 
-    #     steps:
-    #       - name: Checkout code
-    #         uses: actions/checkout@v4
+    build-frontend-macos:
+        runs-on: macos-15
+        strategy:
+            matrix:
+                framework: [net9.0-ios, net9.0-maccatalyst]
 
-    #       - name: Install .NET 9
-    #         uses: actions/setup-dotnet@v4
-    #         with:
-    #             dotnet-version: 9.0
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 9.0
+                cache: true
+            - run: dotnet workload install maui
+            - run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-    #       - name: Install .NET MAUI Workload
-    #         run: dotnet workload install maui
-
-    #       - name: Select Xcode Version
-    #         run: sudo xcode-select -s /Applications/Xcode_16.2.app
-    #         if: runner.os == 'macOS'
-
-    #       - name: Build
-    #         run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj
+            - run: dotnet publish ./MauiWithBackend.Frontend/MauiWithBackend.Frontend.csproj -o release/ --sc -f ${{ matrix.framework }}
+            - uses: actions/upload-artifact@v4
+              with:
+                name: maui-frontend-${{ matrix.framework }}
+                if-no-files-found: error
+                path: release/
